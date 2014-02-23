@@ -2,7 +2,7 @@
 
 Here are the instructions for reproducing the baseline RC3 result (on simplified Internet-2 topology, with bottleneck bandwidth of 1Gbps, average RTT of 40ms at 30% average link utilization)
 
-1. Clone the rc3 repository
+1. Clone the RC3 repository
 2. cd ns-3.16
 3. ./waf configure -d release  
 4. ./waf
