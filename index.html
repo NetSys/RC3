@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>RC3 by NetSys</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">RC3</h1>
+        <p class="header">Recursively Cautious Congestion Control</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/NetSys/RC3/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/NetSys/RC3/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/NetSys/RC3">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/NetSys">NetSys</a></p>
+
+
+      </header>
+      <section>
+        <h3>
+<a name="reproducing-rc3-baseline-results" class="anchor" href="#reproducing-rc3-baseline-results"><span class="octicon octicon-link"></span></a>Reproducing RC3 Baseline Results</h3>
+
+<p>Here are the instructions for reproducing the baseline RC3 result (on simplified Internet-2 topology, with bottleneck bandwidth of 1Gbps, average RTT of 40ms at 30% average link utilization)</p>
+
+<ol>
+<li>Clone the rc3 repository</li>
+<li>cd ns-3.16</li>
+<li>./waf configure -d release<br>
+</li>
+<li>./waf</li>
+<li>./run-baseline #runs the simulation with regular TCP, followed by RC3. It takes around 2 hours for each simulation to complete</li>
+<li>cd baseline-result</li>
+<li>./getres-fair  #computes the average FCTs and stores them in improvements/ </li>
+<li>cd improvements</li>
+<li>./getimp       #computes the % reduction and prints the results</li>
+<li>./getplot-report #plots the baseline graph</li>
+</ol><p>Please contact us at (radhika @ eecs dot berkeley dot edu) or (justine @ eecs dot berkeley dot edu)</p>
+
+<ul>
+<li>if you would like to test RC3 under more scenarios as done in the paper. We can send you the workloads and topologies we used, along with further instructions.</li>
+<li>if you happen to find a bug! We have extensively tested RC3 and hope it is bug-free. But if there is a corner-case that we failed to take into account, please bring it to our notice.</li>
+<li>if you have any other questions</li>
+</ul>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
