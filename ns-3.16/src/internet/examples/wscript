@@ -1,0 +1,15 @@
+## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+def build(bld):
+    if not bld.env['ENABLE_EXAMPLES']:
+        return;
+
+    obj = bld.create_ns3_program('main-simple',
+                                 ['network', 'internet', 'applications'])
+    obj.source = 'main-simple.cc'
+
+    obj = bld.create_ns3_program( 'ecmp-global-routing',
+                                  ['applications', 'point-to-point', 'internet', 'network', 'core'])
+    obj.source = 'ecmp-global-routing.cc'
+
+

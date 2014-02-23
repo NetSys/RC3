@@ -1,0 +1,13 @@
+How this is generated:
+
+I copied the contents of internet2 directory:
+They were generated as follows-
+  for load 0.x:
+    go to aggressive-priorities/flow_arrival_sim/radhika (for outsiders, these are my local files. Ping me if you want to generate your own workload)
+    ruby generate_topology_and_workload_radhika.rb internet2 x000 9 0 size_dm_cdf.adity
+    python assignDelay.py <linkfile> <withbandwidthdelay>
+    python getMoreLoads.py <withbandwidthdelay> 0.x <final-file-with-changed-bandwidth>
+    copy <flow-file> from aggressive-priorities/flow_arrival_sim/radhika as the workload file (put number of flows on top)
+  The two files - topology with changed bandwidth and delay and the workload are put in 0.x directory 
+
+do: python createworkload.py internet2-withbandwidthdelay-1000Mbps <fanout> internet2-withbandwidthdelay-fanout<fanout>

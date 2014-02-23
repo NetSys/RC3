@@ -1,0 +1,29 @@
+#!/bin/bash
+
+
+#Running regular TCP
+
+for i in 0.3
+  do
+    ./waf --run "scratch/wan-internet2-sack --topofile=internet2-fanout10/internet2-withbandwidthdelay-fanout10.txt --workload=internet2-fanout10/$i-10-50 --endhostfile=internet2-fanout10/internet2-endhosts.txt --bufsize=5000000 --icwbase=4 --endtime=5 --logCleanUp=1"
+    mv recv.txt baseline-result/recv-$i-i2-f10-sack-regular.txt
+    mv drops.txt baseline-result/drops-$i-i2-f10-sack-regular.txt
+    mv queuelength.txt baseline-result/queuelength-$i-i2-f10-sack-regular.txt
+    mv linkutil.txt baseline-result/linkutil-$i-i2-f10-sack-regular.txt
+    mv rto.txt baseline-result/rto-$i-i2-f10-sack-regular.txt
+    mv cleanup.txt baseline-result/cleanup-$i-i2-f10-sack-regular.txt
+  done
+
+
+#Running RC3
+for i in 0.3
+  do
+        ./waf --run "scratch/wan-internet2-sack --topofile=internet2-fanout10/internet2-withbandwidthdelay-fanout10.txt --workload=internet2-fanout10/$i-10-50 --endhostfile=internet2-fanout10/internet2-endhosts.txt --useP2=1 --multipriorities=1 --icwbase=4 --bufsize=5000000 --logCleanUp=1 --endtime=5"
+        mv recv.txt baseline-result/recv-$i-i2-f10-sack-rc3.txt
+        mv drops.txt baseline-result/drops-$i-i2-f10-sack-rc3.txt
+        mv queuelength.txt baseline-result/queuelength-$i-i2-f10-sack-rc3.txt
+        mv linkutil.txt baseline-result/linkutil-$i-i2-f10-sack-rc3.txt
+        mv rto.txt baseline-result/rto-$i-i2-f10-sack-rc3.txt
+        mv cleanup.txt baseline-result/cleanup-$i-i2-f10-sack-rc3.txt
+     done
+

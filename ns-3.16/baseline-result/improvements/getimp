@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+for i in 0.3 
+          do
+              python findimppersize-avg.py regular-$i rc3-$i-0-mp $i-0-mp
+              echo "Average across flows:"
+              python findimppersize-avgbulk.py regular-bulk-$i rc3-bulk-$i-0-mp $i-0-mp-bulk
+              echo "Average across bytes:"
+              python findimppersize-avgbulk.py regular-weighted-$i rc3-weighted-$i-0-mp $i-0-mp-weighted
+                            
+          done
+

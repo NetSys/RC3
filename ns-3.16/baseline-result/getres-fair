@@ -1,0 +1,11 @@
+#!/bin/bash
+
+rm improvements/regular*
+rm improvements/rc3*
+
+for i in 0.3
+  do
+    time python findavg_fair.py recv-$i-i2-f10-sack-regular.txt recv-$i-i2-f10-sack-rc3.txt $i $i-0-mp
+  done
+
+
