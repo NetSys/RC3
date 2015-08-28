@@ -63,8 +63,9 @@ private:
   virtual Ptr<Packet> DoDequeue (void);
   virtual Ptr<const Packet> DoPeek (void) const;
   bool DropPacket(uint16_t);
-  void InsertPacketInSortedQueue(Ptr<Packet>, uint64_t pr);
-  uint64_t GetPriorityFromPacket(Ptr<const Packet>);
+  void InsertPacketInSortedQueue(Ptr<Packet>, int64_t pr);
+  int64_t GetSlackFromPacket(Ptr<const Packet>);
+  int64_t GetPriorityFromPacket(Ptr<const Packet>);
   uint64_t GetTimestampFromPacket(Ptr<const Packet>);
   void SetTimestampForPacket(Ptr<Packet>);
   uint32_t GetIdFromPacket(Ptr<const Packet>);

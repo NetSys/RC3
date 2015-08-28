@@ -15,8 +15,8 @@ public:
   void SetId(uint32_t id);
   uint32_t GetId() const;
 
-  void SetPriority(uint64_t priority);
-  uint64_t GetPriority() const;
+  void SetPriority(int64_t priority);
+  int64_t GetPriority() const;
 
   void SetTimestamp(uint64_t timestamp);
   uint64_t GetTimestamp() const;

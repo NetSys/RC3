@@ -483,7 +483,7 @@ TcpRC3Sack::ProcessListen (Ptr<Packet> packet, const TcpHeader& tcpHeader,
   NS_ASSERT(tag.GetTypeId().GetName() == "ns3::MyPriorityTag");
 
   uint32_t id = 0;
-  uint64_t pr = 0;
+  int64_t pr = 0;
 
   if(peeked)
   {
@@ -741,7 +741,7 @@ TcpRC3Sack::ReceivedData (Ptr<Packet> p, const TcpHeader& tcpHeader)
   NS_ASSERT(tag.GetTypeId().GetName() == "ns3::MyPriorityTag");
   
   SequenceNumber32 expectedSeq = m_rxBuffer.NextRxSequence ();
-  NS_LOG_INFO("Received Data "<<tcpHeader.GetSequenceNumber()<<"\t"<<(uint64_t)tag.GetPriority()<<"\n");
+  NS_LOG_INFO("Received Data "<<tcpHeader.GetSequenceNumber()<<"\t"<<(int64_t)tag.GetPriority()<<"\n");
   
   if(tag.GetPriority() > 0){ //
 
@@ -845,15 +845,16 @@ TcpRC3Sack::ReceivedAck (Ptr<Packet> packet, const TcpHeader& tcpHeader)
     //m_scoreboard.Print(std::cerr, m_nextTxSequence, m_txBuffer.HeadSequence());
     /******************/
     return;
-  }else if (tag.GetPriority() == 0){
+  }
+  /*else if (tag.GetPriority() == 0){
     //std::cout <<  Simulator::Now().GetSeconds() << " " << this << " RECEIVED HI ACK. " << tcpHeader.GetAckNumber() << " " << m_txBuffer.Size() << std::endl;
   }else{
     std::cout << "Priorityless ACK?? Not possible" << std::endl;
-  }
+  }*/
  
 
   
-  NS_LOG_INFO("Received Ack "<<tcpHeader.GetAckNumber()<<"\t"<<(uint64_t)tag.GetPriority()<<"\t"<<m_nextTxSequence<<"\t"<<m_txBuffer.HeadSequence()<<"\t"<<m_highTxMark<<"\n");
+  NS_LOG_INFO("Received Ack "<<tcpHeader.GetAckNumber()<<"\t"<<(int64_t)tag.GetPriority()<<"\t"<<m_nextTxSequence<<"\t"<<m_txBuffer.HeadSequence()<<"\t"<<m_highTxMark<<"\n");
 
   if(m_logAcks)
   {
@@ -967,7 +968,7 @@ TcpRC3Sack::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize, bool withAck
   tag.SetPriority(0);
   p -> AddPacketTag(tag);
 
-  NS_LOG_INFO(this<<" I am here, sending data "<<m_flowid<<"\t"<<(uint64_t)m_priority<<"\t"<<seq);
+  NS_LOG_INFO(this<<" I am here, sending data "<<m_flowid<<"\t"<<(int64_t)m_priority<<"\t"<<seq);
   /*
    * Add tags for each socket option.
    * Note that currently the socket adds both IPv4 tag and IPv6 tag
@@ -1068,9 +1069,9 @@ void TcpRC3Sack::SendEmptyPacket(uint8_t flags){
 
 /** Send an empty packet with specified TCP flags */
 void
-TcpRC3Sack::SendEmptyPacket (uint8_t flags, uint64_t priority, bool withSack)
+TcpRC3Sack::SendEmptyPacket (uint8_t flags, int64_t priority, bool withSack)
 {
-  NS_LOG_INFO(this<<" I am here, in empty packet "<<m_flowid<<"\t"<<(uint64_t)priority<<"\t"<<m_rxBuffer.NextRxSequence ());
+  NS_LOG_INFO(this<<" I am here, in empty packet "<<m_flowid<<"\t"<<(int64_t)priority<<"\t"<<m_rxBuffer.NextRxSequence ());
   NS_LOG_FUNCTION (this << (uint32_t)flags);
   Ptr<Packet> p = Create<Packet> ();
   TcpHeader header;
@@ -1352,7 +1353,7 @@ TcpRC3Sack::SendLowPriorityPacket()
   uint8_t flags =  0; 
 
 
-  uint64_t priority = 1;
+  int64_t priority = 1;
 
   uint32_t maxseq = p2_block_max;
   int packetCounter;
@@ -1369,7 +1370,7 @@ TcpRC3Sack::SendLowPriorityPacket()
   tag.SetPriority(priority);
   p -> AddPacketTag(tag);
 
-  NS_LOG_INFO(this<<"Sending rc3 data "<<seq<<" "<<packetCounter<<" "<<tag.GetId()<<" "<<(uint64_t)tag.GetPriority());
+  NS_LOG_INFO(this<<"Sending rc3 data "<<seq<<" "<<packetCounter<<" "<<tag.GetId()<<" "<<(int64_t)tag.GetPriority());
   if (IsManualIpTos ())
     {    
       SocketIpTosTag ipTosTag;

@@ -422,7 +422,7 @@ static void PacketDropped(std::string context, Ptr<Packet const> p)
           MyPriorityTag tag;
           p->PeekPacketTag(tag);
           NS_ASSERT(tag.GetTypeId().GetName() == "ns3::MyPriorityTag");
-          dropsofs<<Simulator::Now().GetSeconds()<<"\t"<<context<<"\t"<<tag.GetId()<<"\t"<<(uint64_t)tag.GetPriority()<<"\n";
+          dropsofs<<Simulator::Now().GetSeconds()<<"\t"<<context<<"\t"<<tag.GetId()<<"\t"<<(int64_t)tag.GetPriority()<<"\n";
       }
 }
 
@@ -463,7 +463,7 @@ int main (int argc, char *argv[])
   //LogComponentEnable ("TcpRC3Sack", LOG_LEVEL_ALL);
   //LogComponentEnable ("TcpTxBuffer", LOG_LEVEL_ALL);  
   //LogComponentEnable ("PriorityQueue", LOG_LEVEL_INFO);  
-  LogComponentEnable ("LstfQueue", LOG_LEVEL_INFO);  
+  //LogComponentEnable ("LstfQueue", LOG_LEVEL_INFO);  
   
 
  

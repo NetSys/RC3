@@ -38,11 +38,11 @@ uint32_t MyPriorityTag::GetId() const
   return m_flowid;
 }
 
-void MyPriorityTag::SetPriority(uint64_t priority)
+void MyPriorityTag::SetPriority(int64_t priority)
 {
   m_priority = priority;
 }
-uint64_t MyPriorityTag::GetPriority() const
+int64_t MyPriorityTag::GetPriority() const
 {
   return m_priority;
 }
