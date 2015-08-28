@@ -83,7 +83,7 @@ protected:
 
   virtual uint32_t SendDataPacket (SequenceNumber32 seq, uint32_t maxSize, bool withAck); // Send a data packet
   void SendEmptyPacket (uint8_t flags);
-  virtual void SendEmptyPacket (uint8_t flags, uint8_t priority, bool withSack=false);
+  virtual void SendEmptyPacket (uint8_t flags, uint64_t priority, bool withSack=false);
   virtual bool SendPendingData (bool withAck = false); // Send as much as the window allows
 
   virtual void FillSackStack (SequenceNumber32 seqno);
@@ -119,6 +119,7 @@ protected:
   bool                   m_logAcks;
   bool                   m_logCleanUp;
   bool                   m_flushOut;
+  bool                   m_lstf;
   Ptr<Queue>             m_devQueue;
   uint32_t               m_flowid;
   uint32_t               m_flowsize;

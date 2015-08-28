@@ -15,9 +15,11 @@ public:
   void SetId(uint32_t id);
   uint32_t GetId() const;
 
-  void SetPriority(uint8_t priority);
-  uint8_t GetPriority() const;
+  void SetPriority(uint64_t priority);
+  uint64_t GetPriority() const;
 
+  void SetTimestamp(uint64_t timestamp);
+  uint64_t GetTimestamp() const;
 
   static TypeId GetTypeId (void);
   virtual TypeId GetInstanceTypeId (void) const;
@@ -29,7 +31,8 @@ public:
 
 private:
   uint32_t m_flowid;
-  uint8_t m_priority;
+  uint64_t m_priority;
+  uint64_t m_timestamp;
 };
 
 } //namespace ns3

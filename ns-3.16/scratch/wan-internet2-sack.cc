@@ -422,7 +422,7 @@ static void PacketDropped(std::string context, Ptr<Packet const> p)
           MyPriorityTag tag;
           p->PeekPacketTag(tag);
           NS_ASSERT(tag.GetTypeId().GetName() == "ns3::MyPriorityTag");
-          dropsofs<<Simulator::Now().GetSeconds()<<"\t"<<context<<"\t"<<tag.GetId()<<"\t"<<(uint16_t)tag.GetPriority()<<"\n";
+          dropsofs<<Simulator::Now().GetSeconds()<<"\t"<<context<<"\t"<<tag.GetId()<<"\t"<<(uint64_t)tag.GetPriority()<<"\n";
       }
 }
 
@@ -452,6 +452,7 @@ int main (int argc, char *argv[])
   bool flushOut = 0;
   double backgrounddrop = 0;
   uint32_t prioritySlots = 4;
+  bool lstf = 0;
 
 
 
@@ -461,6 +462,8 @@ int main (int argc, char *argv[])
   //LogComponentEnable ("TcpSocketBase", LOG_LEVEL_ALL);
   //LogComponentEnable ("TcpRC3Sack", LOG_LEVEL_ALL);
   //LogComponentEnable ("TcpTxBuffer", LOG_LEVEL_ALL);  
+  //LogComponentEnable ("PriorityQueue", LOG_LEVEL_INFO);  
+  LogComponentEnable ("LstfQueue", LOG_LEVEL_INFO);  
   
 
  
@@ -478,6 +481,7 @@ int main (int argc, char *argv[])
   cmd.AddValue("logCleanUp", "logCleanUp", logCleanUp);
   cmd.AddValue("backgrounddrop", "backgrounddrop", backgrounddrop);
   cmd.AddValue("flushOut", "flushOut", flushOut);
+  cmd.AddValue("lstf", "lstf", lstf);
   cmd.Parse(argc, argv); 
 
 
@@ -495,6 +499,7 @@ int main (int argc, char *argv[])
   Config::SetDefault ("ns3::TcpRC3Sack::FlushOut", BooleanValue(flushOut));
   Config::SetDefault ("ns3::TcpRC3Sack::MultiPriorities", BooleanValue(multipriorities));
   Config::SetDefault ("ns3::TcpRC3Sack::PrioritySlots", UintegerValue(prioritySlots));
+  Config::SetDefault ("ns3::TcpRC3Sack::LSTF", BooleanValue(lstf));
 
   FILE *fp = fopen(topofile, "r");
   FILE *fp2 = fopen(endhostfile,"r");
@@ -550,7 +555,12 @@ int main (int argc, char *argv[])
   for(int i=0; i < LINKS; i++)
   {
     //setting link characteristics
-    pointToPoint[i].SetQueue("ns3::PriorityQueue");
+    if(lstf) {
+      pointToPoint[i].SetQueue("ns3::LstfQueue");
+    }
+    else {
+      pointToPoint[i].SetQueue("ns3::PriorityQueue");
+    }
     sprintf(str, "%dMbps", linkBandwidths[i]);
     pointToPoint[i].SetDeviceAttribute ("DataRate", StringValue (str));
     sprintf(str, "%dms", linkDelays[i]);

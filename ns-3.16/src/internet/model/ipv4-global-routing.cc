@@ -195,7 +195,7 @@ Ipv4GlobalRouting::GetTupleValue (const Ipv4Header &header, Ptr<const Packet> ip
         {
           NS_ASSERT(tag.GetTypeId().GetName() == "ns3::MyPriorityTag");
           tupleValue += tag.GetId();
-          NS_LOG_INFO("["<<m_ipv4->GetObject<Node>()->GetId()<<"]"<<" Flow ID = "<<tag.GetId()<<" Priority = "<<(uint16_t)tag.GetPriority());
+          NS_LOG_INFO("["<<m_ipv4->GetObject<Node>()->GetId()<<"]"<<" Flow ID = "<<tag.GetId()<<" Priority = "<<(uint64_t)tag.GetPriority());
         }
         break;
       }
