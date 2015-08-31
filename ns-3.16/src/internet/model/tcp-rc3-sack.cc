@@ -495,7 +495,7 @@ TcpRC3Sack::ProcessListen (Ptr<Packet> packet, const TcpHeader& tcpHeader,
   Ptr<TcpSocketBase> newSock = Fork ();
   NS_LOG_LOGIC ("Cloned a TcpSocketBase " << newSock);
   newSock->SetAttribute("FlowId", UintegerValue (id));
-  newSock->SetAttribute("Priority",UintegerValue (pr));
+  newSock->SetAttribute("Priority",UintegerValue (0));
   Simulator::ScheduleNow (&TcpSocketBase::CompleteFork, newSock,
                           packet, tcpHeader, fromAddress, toAddress);
 }

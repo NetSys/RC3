@@ -67,8 +67,10 @@ private:
   int64_t GetSlackFromPacket(Ptr<const Packet>);
   int64_t GetPriorityFromPacket(Ptr<const Packet>);
   uint64_t GetTimestampFromPacket(Ptr<const Packet>);
+  void SetPriorityForPacket(Ptr<Packet>, int64_t pr);
   void SetTimestampForPacket(Ptr<Packet>);
   uint32_t GetIdFromPacket(Ptr<const Packet>);
+  int64_t GetTransmissionTime(Ptr<const Packet>);
   void LogQueueLength();
   
   uint32_t counts[NUM_PRIORITY_QUEUES];
@@ -78,6 +80,7 @@ private:
   uint32_t m_maxBytes;
   uint32_t m_bytesInQueue;
   uint32_t m_id;
+  uint32_t m_bandwidth;
   double m_backgrounddrop;
   QueueMode m_mode;
   EventId m_sendEvent;

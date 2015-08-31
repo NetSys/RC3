@@ -463,7 +463,7 @@ int main (int argc, char *argv[])
   //LogComponentEnable ("TcpRC3Sack", LOG_LEVEL_ALL);
   //LogComponentEnable ("TcpTxBuffer", LOG_LEVEL_ALL);  
   //LogComponentEnable ("PriorityQueue", LOG_LEVEL_INFO);  
-  //LogComponentEnable ("LstfQueue", LOG_LEVEL_INFO);  
+  LogComponentEnable ("LstfQueue", LOG_LEVEL_INFO);  
   
 
  
@@ -575,6 +575,10 @@ int main (int argc, char *argv[])
     devices[i].Get(0)->GetObject<PointToPointNetDevice> () -> TraceConnect("MacTx", str, MakeCallback(&LinkUtilLog));
     sprintf(str, "%d", i);
     devices[i].Get(1)->GetObject<PointToPointNetDevice> () -> TraceConnect("MacTx", str, MakeCallback(&LinkUtilLog));
+    if(lstf) {
+      devices[i].Get(0)->GetObject<PointToPointNetDevice> () -> GetQueue()->SetAttribute("Bandwidth", UintegerValue(linkBandwidths[i]));
+      devices[i].Get(1)->GetObject<PointToPointNetDevice> () -> GetQueue()->SetAttribute("Bandwidth", UintegerValue(linkBandwidths[i]));
+    }
   }
 
 

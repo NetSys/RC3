@@ -67,6 +67,10 @@ TypeId LstfQueue::GetTypeId (void)
                    UintegerValue (0),
                    MakeUintegerAccessor (&LstfQueue::m_id),
                    MakeUintegerChecker<uint32_t> ())
+    .AddAttribute ("Bandwidth", "The link bandwidth.",
+                   UintegerValue (0),
+                   MakeUintegerAccessor (&LstfQueue::m_bandwidth),
+                   MakeUintegerChecker<uint32_t> ())
     .AddAttribute ("BackgroundDrop", "Background Drop rate",
                     DoubleValue(0.0),
                     MakeDoubleAccessor(&LstfQueue::m_backgrounddrop),
@@ -89,6 +93,7 @@ LstfQueue::LstfQueue () :
   m_totalpackets (0),
   m_bytesInQueue (0),
   m_id(0),
+  m_bandwidth(1),
   m_backgrounddrop(0),
   m_sendEvent()
   //m_time (0),
@@ -154,6 +159,17 @@ LstfQueue::GetPriorityFromPacket(Ptr <const Packet> p)
     NS_ASSERT(tag.GetTypeId().GetName() == "ns3::MyPriorityTag");
     return tag.GetPriority();
 }
+void
+LstfQueue::SetPriorityForPacket(Ptr <Packet> p, int64_t pr)
+{
+    MyPriorityTag tag;
+    Packet::EnablePrinting();
+    p->RemovePacketTag(tag);
+    NS_ASSERT(tag.GetTypeId().GetName() == "ns3::MyPriorityTag");
+    tag.SetPriority(pr);
+    p->AddPacketTag(tag);
+}
+
 
 void
 LstfQueue::SetTimestampForPacket(Ptr <Packet> p)
@@ -199,6 +215,14 @@ LstfQueue::GetIdFromPacket(Ptr <const Packet> p)
     return tag.GetId();
 }
 
+int64_t
+LstfQueue::GetTransmissionTime(Ptr <const Packet> p)
+{
+  double size = (p->GetSize ()) * 8.0;
+  int64_t trans_time = (int64_t)((size * 1000)/((double)(m_bandwidth)));
+  return trans_time;
+}
+
 void
 LstfQueue::InsertPacketInSortedQueue(Ptr <Packet> p, int64_t pr)
 {
@@ -207,13 +231,13 @@ LstfQueue::InsertPacketInSortedQueue(Ptr <Packet> p, int64_t pr)
     return;
   }
   Ptr<Packet> tail_p = m_packets.back();
-  int64_t temppr = GetSlackFromPacket(tail_p);
+  int64_t temppr = GetSlackFromPacket(tail_p) + GetTransmissionTime(tail_p);
   if(temppr <= pr) {
     m_packets.push_back(p);
     return;
   }
   for (std::deque<Ptr<Packet> >::iterator it = m_packets.begin(); it != m_packets.end(); it++) {
-    temppr = GetSlackFromPacket(*it);
+    temppr = GetSlackFromPacket(*it) + GetTransmissionTime(*it);
     if(temppr > pr) {
       m_packets.insert(it, p);
       return;
@@ -233,7 +257,7 @@ LstfQueue::DoEnqueue (Ptr<Packet> p)
   int64_t tail_p_pr;
 
   SetTimestampForPacket(p);
-  pr = GetSlackFromPacket(p);
+  pr = GetSlackFromPacket(p) + GetTransmissionTime(p);
   NS_LOG_LOGIC("Enqueueing in priority queue");
   //p->Print(std::cout);
   //std::cout<<std::endl;
@@ -242,7 +266,7 @@ LstfQueue::DoEnqueue (Ptr<Packet> p)
   {
       NS_LOG_LOGIC ("Queue full (at max packets) -- droppping pkt");
       Ptr<Packet> tail_p = m_packets.back();
-      tail_p_pr = GetSlackFromPacket(tail_p);
+      tail_p_pr = GetSlackFromPacket(tail_p) + GetTransmissionTime(tail_p);
       if(tail_p_pr > pr) {
         m_packets.pop_back();
         Drop (tail_p);
@@ -262,7 +286,7 @@ LstfQueue::DoEnqueue (Ptr<Packet> p)
       NS_LOG_LOGIC ("Queue full (packet would exceed max bytes) -- droppping pkt");
       while((m_bytesInQueue + p->GetSize() >= m_maxBytes)&&(dropped)) {
         Ptr<Packet> tail_p = m_packets.back();
-        tail_p_pr = GetSlackFromPacket(tail_p);
+        tail_p_pr = GetSlackFromPacket(tail_p) + GetTransmissionTime(tail_p);
         if(tail_p_pr > pr) {
           m_packets.pop_back();
           Drop (tail_p);
@@ -310,7 +334,7 @@ LstfQueue::DoEnqueue (Ptr<Packet> p)
   m_totalpackets++; 
   
   NS_LOG_INFO(Simulator::Now().GetSeconds()<<": "<<m_id<<"\t Enqueueing with cur slack "<< GetSlackFromPacket(p) <<" and orig slack " << GetPriorityFromPacket(p) << " at " << GetTimestampFromPacket(p) <<" Total bytes in queue = "<<m_bytesInQueue);
-  
+  NS_LOG_INFO("Packet size " << p->GetSize() << ", bandwidth = " << m_bandwidth << ", trans time " << GetTransmissionTime(p)); 
   NS_LOG_LOGIC ("Number packets " << m_totalpackets);
   NS_LOG_LOGIC ("Number bytes " << m_bytesInQueue);
 
@@ -328,8 +352,12 @@ LstfQueue::DoDequeue (void)
   {
           NS_LOG_LOGIC(Simulator::Now().GetSeconds()<<":Dequeuing from queue");
           Ptr<Packet> p = m_packets.front ();
+
           int64_t pr = GetSlackFromPacket(p);
           int64_t orig_pr = GetPriorityFromPacket(p);
+
+          SetPriorityForPacket(p, pr);
+
           m_packets.pop_front ();
           m_bytesInQueue -= p->GetSize ();
           m_totalpackets--;
@@ -339,7 +367,7 @@ LstfQueue::DoDequeue (void)
           //std::cout<<std::endl;     
           NS_LOG_LOGIC ("Number packets " << m_totalpackets);
           NS_LOG_LOGIC ("Number bytes " << m_bytesInQueue);
-          NS_LOG_INFO(Simulator::Now().GetSeconds()<<": "<<m_id<<"\t Dequeueing with cur slack  "<< pr << " and orig slack " << orig_pr << " which arrived at time " << GetTimestampFromPacket(p) << " Total bytes in subqueue = "<<m_bytesInQueue);
+          NS_LOG_INFO(Simulator::Now().GetSeconds()<<": "<<m_id<<"\t Dequeueing with cur slack  "<< GetPriorityFromPacket(p) << " and orig slack " << orig_pr << " which arrived at time " << GetTimestampFromPacket(p) << " Total bytes in subqueue = "<<m_bytesInQueue);
           return p;
   }
   NS_LOG_LOGIC ("All queues empty");
